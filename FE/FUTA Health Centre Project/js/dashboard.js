@@ -136,20 +136,6 @@ async function loadPatients() {
       message.textContent = "";
     }
   } catch (error) {
-    // load demo patients from localStorage if present
-    const demo = JSON.parse(localStorage.getItem('mf_demo_patients') || 'null');
-    if (Array.isArray(demo)) {
-      queue = demo;
-      document.getElementById("patientsToday").textContent = demo.length;
-      document.getElementById("waitingCount").textContent = demo.length;
-      document.getElementById("urgentCount").textContent = demo.filter((p) => Number(p.priority) <= 2).length;
-      message.textContent = "Showing demo queue from local storage.";
-      message.className = "message demo-message";
-    } else {
-      message.textContent = "Showing demo queue. Connect the queue service to load live patients.";
-      message.className = "message demo-message";
-    }
-  } catch (error) {
     // no backend: seed demo patients in localStorage if missing
     const existing = localStorage.getItem('mf_demo_patients');
     if (!existing) {
