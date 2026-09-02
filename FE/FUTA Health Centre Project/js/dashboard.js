@@ -40,7 +40,7 @@ function renderQueue() {
 
   patientTableBody.innerHTML = filtered.length ? filtered.map((patient) => `
     <tr>
-      <td><div class="patient-cell"><span class="avatar">${escapeHtml(patient.fullName.split(" ").map((part) => part[0]).join("").slice(0, 2))}</span><div><strong>${escapeHtml(patient.fullName)}</strong><small>${escapeHtml(patient.sex)} · OPD</small></div></div></td>
+      <td><div class="patient-cell"><span class="avatar">${escapeHtml(patient.fullName.split(" ").map((part) => part[0]).join("").slice(0, 2))}</span><div>${isAdmin() ? `<a href="patient-form.html?id=${encodeURIComponent(patient.id)}"><strong>${escapeHtml(patient.fullName)}</strong></a>` : `<strong>${escapeHtml(patient.fullName)}</strong>`}<small>${escapeHtml(patient.sex)} · OPD</small></div></div></td>
       <td><strong class="queue-number">${escapeHtml(patient.hospitalNumber)}</strong></td>
       <td><span class="priority-badge ${patient.priority <= 2 ? "urgent" : "standard"}">ESI ${patient.priority} · ${patient.priority <= 2 ? "Urgent" : "Standard"}</span></td>
       <td>${escapeHtml(patient.arrival)}</td><td>${escapeHtml(patient.wait)}</td>
@@ -63,6 +63,18 @@ function renderQueue() {
       queue = queue.filter(p => String(p.id) !== String(id));
       renderQueue();
     }));
+  }
+
+  // Make rows clickable for admins (clicking row navigates to edit)
+  if (isAdmin()) {
+    document.querySelectorAll('#patientTableBody tr').forEach(tr => {
+      tr.addEventListener('click', (ev) => {
+        // ignore clicks on buttons/links
+        if (ev.target.closest('button') || ev.target.closest('a')) return;
+        const link = tr.querySelector('a.row-action');
+        if (link) window.location.href = link.href;
+      });
+    });
   }
 }
 

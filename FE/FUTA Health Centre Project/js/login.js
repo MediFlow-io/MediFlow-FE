@@ -87,4 +87,20 @@
   window._mf_debug = { ensureDemoUsers, findLocalUser };
   // ensure demo users exist immediately
   ensureDemoUsers();
+
+  // wire demo-fill buttons to auto-fill the login form
+  document.querySelectorAll('.demo-fill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const u = btn.dataset.username || '';
+      const p = btn.dataset.password || '';
+      const idEl = document.getElementById('staffId');
+      const pwEl = document.getElementById('password');
+      if (idEl) { idEl.value = u; idEl.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (pwEl) { pwEl.value = p; pwEl.dispatchEvent(new Event('input', { bubbles: true })); }
+      // focus the login button so keyboard users can press Enter
+      const submit = loginForm.querySelector('button[type=submit]') || loginForm.querySelector('button');
+      if (submit) submit.focus();
+    });
+  });
+
 })();
