@@ -27,6 +27,47 @@ function escapeHtml(value) {
   return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 
+// Simple confirmation modal used instead of window.confirm for better UX
+function createConfirmModal() {
+  if (document.getElementById('mf-confirm-modal')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'mf-confirm-modal';
+  overlay.style = 'position:fixed;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  overlay.innerHTML = `
+    <div style="background:#fff;padding:18px;border-radius:8px;max-width:420px;width:92%;box-shadow:0 10px 30px rgba(0,0,0,0.12);">
+      <div id="mf-confirm-text" style="margin-bottom:12px;color:#2b3e4f;font-weight:700"></div>
+      <div style="text-align:right;">
+        <button id="mf-confirm-cancel" class="small-button" style="margin-right:8px;">Cancel</button>
+        <button id="mf-confirm-ok" class="button">Confirm</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#mf-confirm-cancel').addEventListener('click', () => overlay.style.display = 'none');
+}
+
+function showConfirm(text) {
+  return new Promise((resolve) => {
+    createConfirmModal();
+    const overlay = document.getElementById('mf-confirm-modal');
+    overlay.querySelector('#mf-confirm-text').textContent = text;
+    overlay.style.display = 'flex';
+    const ok = overlay.querySelector('#mf-confirm-ok');
+    const cancel = overlay.querySelector('#mf-confirm-cancel');
+
+    function done(val) {
+      overlay.style.display = 'none';
+      ok.removeEventListener('click', onOk);
+      cancel.removeEventListener('click', onCancel);
+      resolve(val);
+    }
+    function onOk() { done(true); }
+    function onCancel() { done(false); }
+    ok.addEventListener('click', onOk);
+    cancel.addEventListener('click', onCancel);
+  });
+}
+
 function renderQueue() {
   const query = searchInput.value.trim().toLowerCase();
   const filter = priorityFilter.value;
@@ -52,16 +93,18 @@ function renderQueue() {
     </tr>`).join("") : `<tr><td colspan="7" class="empty">No patients match this view.</td></tr>`;
 
   if (allowDelete) {
-    document.querySelectorAll('.row-delete').forEach(btn => btn.addEventListener('click', (ev) => {
-      const id = ev.target.dataset.id;
-      if (!confirm('Delete this patient?')) return;
-      // delete from demo storage if used
-      const demo = JSON.parse(localStorage.getItem('mf_demo_patients') || '[]');
-      const remaining = demo.filter(p => String(p.id) !== String(id));
-      localStorage.setItem('mf_demo_patients', JSON.stringify(remaining));
-      // also remove from queue variable
-      queue = queue.filter(p => String(p.id) !== String(id));
-      renderQueue();
+    document.querySelectorAll('.row-delete').forEach(btn => btn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const id = ev.target.dataset.id;
+          const confirmed = await showConfirm('Delete this patient? This cannot be undone.');
+          if (!confirmed) return;
+          // delete from demo storage if used
+          const demo = JSON.parse(localStorage.getItem('mf_demo_patients') || '[]');
+          const remaining = demo.filter(p => String(p.id) !== String(id));
+          localStorage.setItem('mf_demo_patients', JSON.stringify(remaining));
+          // also remove from queue variable
+          queue = queue.filter(p => String(p.id) !== String(id));
+          renderQueue();
     }));
   }
 
@@ -105,6 +148,28 @@ async function loadPatients() {
     } else {
       message.textContent = "Showing demo queue. Connect the queue service to load live patients.";
       message.className = "message demo-message";
+    }
+  } catch (error) {
+    // no backend: seed demo patients in localStorage if missing
+    const existing = localStorage.getItem('mf_demo_patients');
+    if (!existing) {
+      localStorage.setItem('mf_demo_patients', JSON.stringify(demoQueue));
+      queue = demoQueue.slice();
+      document.getElementById("patientsToday").textContent = demoQueue.length;
+      document.getElementById("waitingCount").textContent = demoQueue.length;
+      document.getElementById("urgentCount").textContent = demoQueue.filter((p) => Number(p.priority) <= 2).length;
+      message.textContent = "Demo queue seeded from repository data.";
+      message.className = "message demo-message";
+    } else {
+      const demo = JSON.parse(existing || '[]');
+      if (Array.isArray(demo)) {
+        queue = demo;
+        document.getElementById("patientsToday").textContent = demo.length;
+        document.getElementById("waitingCount").textContent = demo.length;
+        document.getElementById("urgentCount").textContent = demo.filter((p) => Number(p.priority) <= 2).length;
+        message.textContent = "Showing demo queue from local storage.";
+        message.className = "message demo-message";
+      }
     }
   } finally {
     refreshQueue.disabled = false;

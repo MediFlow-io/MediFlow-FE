@@ -104,8 +104,20 @@ function addDeleteButton() {
   btn.className = 'button secondary';
   btn.style.marginLeft = '12px';
   btn.textContent = 'Delete patient';
-  btn.addEventListener('click', () => {
-    if (!confirm('Delete this patient? This cannot be undone.')) return;
+  btn.addEventListener('click', async () => {
+    // create a small confirm modal locally
+    const ok = await (function(text){
+      return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.style = 'position:fixed;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;z-index:9999;';
+        overlay.innerHTML = `<div style="background:#fff;padding:18px;border-radius:8px;max-width:420px;width:92%;box-shadow:0 10px 30px rgba(0,0,0,0.12);"><div style="margin-bottom:12px;color:#2b3e4f;font-weight:700">${text}</div><div style="text-align:right;"><button id=\"mf-cancel\" class=\"small-button\">Cancel</button> <button id=\"mf-ok\" class=\"button\">Delete</button></div></div>`;
+        document.body.appendChild(overlay);
+        overlay.querySelector('#mf-ok').addEventListener('click', () => { document.body.removeChild(overlay); resolve(true); });
+        overlay.querySelector('#mf-cancel').addEventListener('click', () => { document.body.removeChild(overlay); resolve(false); });
+      });
+    })('Delete this patient? This cannot be undone.');
+
+    if (!ok) return;
     // delete from demo store
     const demo = JSON.parse(localStorage.getItem('mf_demo_patients') || '[]');
     const remaining = demo.filter(p => String(p.id) !== String(patientId));
