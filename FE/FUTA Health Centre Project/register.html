@@ -15,7 +15,7 @@
   <main class="auth-container">
     <form id="registerForm" class="form-card" autocomplete="off">
       <h1>Create staff account</h1>
-      <p class="muted">Use a unique staff ID and a strong password.</p>
+      <p class="muted">Administrators only. Use a unique staff ID and a strong password.</p>
       <div id="message" class="message" role="alert" aria-live="polite"></div>
 
       <label for="staffId">Staff ID</label>
@@ -35,6 +35,7 @@
   <footer>&copy; 2026 FUTA Hospital Management System</footer>
 
   <script src="account-validation.js"></script>
+  <script src="auth-guard.js"></script>
   <script src="js/register.js"></script>
 </body>
 </html>

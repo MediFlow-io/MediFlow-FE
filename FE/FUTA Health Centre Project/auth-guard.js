@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  fetch("/api/session", {
+  fetch("/api/me", {
     credentials: "same-origin",
     headers: { Accept: "application/json" }
   })

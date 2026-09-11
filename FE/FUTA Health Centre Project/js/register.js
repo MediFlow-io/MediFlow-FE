@@ -21,12 +21,12 @@ registerForm.addEventListener("submit", async (event) => {
   registerMessage.className = "message";
 
   try {
-    const response = await fetch("/api/register", {
+    const response = await fetch("/api/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({
-        staffId: account.staffId.trim(),
+        username: account.staffId.trim(),
         password: account.password
       })
     });

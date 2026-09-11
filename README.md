@@ -736,7 +736,7 @@ password, enforce a unique staff ID, and return a generic error for duplicate ID
 
 ### Account ownership and access control
 
-The frontend sends same-origin session cookies and checks `GET /api/session` before
+The frontend sends same-origin session cookies and checks `GET /api/me` before
 loading protected pages. The backend remains the security boundary and must:
 
 - Create the authenticated session only after verifying the submitted password.
@@ -744,7 +744,7 @@ loading protected pages. The backend remains the security boundary and must:
   appropriate expiration; do not put session tokens in `localStorage` or URLs.
 - Derive the current account ID from the server-side session, never from a
   client-supplied `userId`, staff ID, or hidden form field.
-- Require authentication on `/api/session`, `/api/patients`, and every other
+- Require authentication on `/api/me`, `/api/patients`, and every other
   protected endpoint, returning `401` when the session is absent or expired.
 - Enforce authorization on every record operation, returning `403` when the
   authenticated account lacks the required role or ownership.
@@ -753,7 +753,8 @@ loading protected pages. The backend remains the security boundary and must:
   requests.
 - Keep login, registration, and duplicate-account errors generic so attackers
   cannot enumerate valid accounts. Account creation should also require an
-  administrator-issued invitation or equivalent approval in production.
+  administrator-issued invitation or equivalent approval in production. Account
+  creation is exposed through the backend's admin-only `/api/users` endpoint.
 
 ---
 
