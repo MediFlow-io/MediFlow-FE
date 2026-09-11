@@ -16,6 +16,7 @@ loginForm.addEventListener("submit", async (event) => {
       headers: {
         "Content-Type": "application/json"
       },
+      credentials: "same-origin",
       body: JSON.stringify({
         staffId,
         password
@@ -25,7 +26,7 @@ loginForm.addEventListener("submit", async (event) => {
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message);
+      throw new Error(result.message || "Unable to sign in.");
     }
 
     message.textContent = result.message;
