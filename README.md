@@ -722,6 +722,39 @@ Because MediFlow stores real patient information, every intern — regardless of
 - Follow the principle of **least privilege** — only request the access your role actually needs.
 - All patient data handling should keep data-protection regulations in mind (e.g. Nigeria Data Protection Act principles: consent, minimal data collection, secure storage).
 
+### Account and password validation
+
+The staff registration form uses [`account-validation.js`](FE/FUTA%20Health%20Centre%20Project/account-validation.js)
+to check staff ID format, password length and complexity, common passwords, staff-ID reuse,
+and confirmation matching. This is a client-side usability check only.
+
+The backend `POST /api/register` handler must import and run the same
+`AccountValidation.validateAccount({ staffId, password, confirmPassword: password })`
+before creating an account. It must also hash the password with a modern password
+hashing algorithm (such as Argon2id or bcrypt), never store or log the plaintext
+password, enforce a unique staff ID, and return a generic error for duplicate IDs.
+
+### Account ownership and access control
+
+The frontend sends same-origin session cookies and checks `GET /api/session` before
+loading protected pages. The backend remains the security boundary and must:
+
+- Create the authenticated session only after verifying the submitted password.
+- Set the session cookie with `HttpOnly`, `Secure`, `SameSite=Strict`, and an
+  appropriate expiration; do not put session tokens in `localStorage` or URLs.
+- Derive the current account ID from the server-side session, never from a
+  client-supplied `userId`, staff ID, or hidden form field.
+- Require authentication on `/api/session`, `/api/patients`, and every other
+  protected endpoint, returning `401` when the session is absent or expired.
+- Enforce authorization on every record operation, returning `403` when the
+  authenticated account lacks the required role or ownership.
+- Rotate the session ID after login, invalidate it on logout, expire inactive
+  sessions, rate-limit login attempts, and use CSRF protection for state-changing
+  requests.
+- Keep login, registration, and duplicate-account errors generic so attackers
+  cannot enumerate valid accounts. Account creation should also require an
+  administrator-issued invitation or equivalent approval in production.
+
 ---
 
 ## 12. Glossary — Terms Every Intern Should Know
