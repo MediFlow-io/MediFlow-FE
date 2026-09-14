@@ -15,6 +15,7 @@
     <nav>
       <a href="dashboard.html">Dashboard</a>
       <a href="patient-form.html">Register Patient</a>
+      <a href="admin-users.html">Create Student</a>
       <button id="logoutButton" class="logout-button">Logout</button>
     </nav>
   </header>
@@ -28,6 +29,35 @@
 
       <a href="patient-form.html" class="button">+ Register Patient</a>
     </div>
+
+    <section class="assistant-card" aria-labelledby="assistantHeading">
+      <div class="assistant-heading">
+        <div>
+          <h2 id="assistantHeading">MediFlow AI help</h2>
+          <p class="muted">Use quick first-aid guidance or ask the configured AI service.</p>
+        </div>
+        <button id="aiButton" class="button secondary" type="button" aria-expanded="false" aria-controls="aiPanel">
+          Open AI help
+        </button>
+      </div>
+
+      <div id="aiPanel" class="assistant-panel" hidden>
+        <div class="quick-tip-row">
+          <label for="quickTipSelect">Quick first-aid tip</label>
+          <select id="quickTipSelect"></select>
+          <button id="quickTipButton" class="small-button" type="button">Show tip</button>
+        </div>
+        <form id="aiForm" class="assistant-form">
+          <label for="aiQuestion">Ask a general health question</label>
+          <div class="assistant-input-row">
+            <input id="aiQuestion" type="text" maxlength="500" placeholder="e.g. What should I do for a minor cut?" required>
+            <button class="button" type="submit">Ask AI</button>
+          </div>
+        </form>
+        <p id="aiResponse" class="assistant-response" role="status" aria-live="polite"></p>
+        <p class="assistant-disclaimer">This is educational guidance, not a diagnosis. Contact emergency services for urgent symptoms.</p>
+      </div>
+    </section>
 
     <div id="message" class="message"></div>
 
@@ -57,6 +87,8 @@
   </main>
 
   <script src="auth-guard.js"></script>
+  <script src="ai-assistant.js"></script>
+  <script src="ai-widget.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>

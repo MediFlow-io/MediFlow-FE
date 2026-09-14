@@ -37,8 +37,38 @@
     </div>
   </main>
 
+  <section class="assistant-card public-assistant" aria-labelledby="assistantHeading">
+    <div class="assistant-heading">
+      <div>
+        <h2 id="assistantHeading">First-aid quick tips</h2>
+        <p class="muted">Get basic guidance while you wait for clinical help.</p>
+      </div>
+      <button id="aiButton" class="button secondary" type="button" aria-expanded="false" aria-controls="aiPanel">
+        Open AI help
+      </button>
+    </div>
+
+    <div id="aiPanel" class="assistant-panel" hidden>
+      <div class="quick-tip-row">
+        <label for="quickTipSelect">Quick first-aid tip</label>
+        <select id="quickTipSelect"></select>
+        <button id="quickTipButton" class="small-button" type="button">Show tip</button>
+      </div>
+      <form id="aiForm" class="assistant-form">
+        <label for="aiQuestion">Ask a general health question</label>
+        <div class="assistant-input-row">
+          <input id="aiQuestion" type="text" maxlength="500" placeholder="e.g. What should I do for a minor cut?" required>
+          <button class="button" type="submit">Ask AI</button>
+        </div>
+      </form>
+      <p id="aiResponse" class="assistant-response" role="status" aria-live="polite"></p>
+      <p class="assistant-disclaimer">This is educational guidance, not a diagnosis. Contact emergency services for urgent symptoms.</p>
+    </div>
+  </section>
+
   <footer>
     &copy; 2026 FUTA Hospital Management System
   </footer>
+  <script src="ai-assistant.js"></script>
 </body>
 </html>

@@ -699,6 +699,28 @@ mediflow/
    ```
 6. Ask questions in the team chat — there are no "silly questions" when you're new.
 
+### Local FUTA Health Centre demo
+
+For the concise change guide, see the [MediFlow documentation index](./Mediflow%20DOC/README.md).
+
+The current frontend includes a small Node.js API server in
+`FE/FUTA Health Centre Project`. It provides local session authentication,
+patient record storage, AI first-aid enquiries, and administrator-created
+student accounts.
+
+```powershell
+cd "FE\FUTA Health Centre Project"
+$env:SESSION_SECRET = "replace-this-with-a-long-random-secret"
+$env:ADMIN_PASSWORD = "change-this-admin-password"
+npm start
+```
+
+Open `http://localhost:3000`. The first run creates the administrator account
+from `ADMIN_PASSWORD`; do not use the demo default in a real deployment.
+The server stores local development data in `FE/FUTA Health Centre Project/data`.
+The AI endpoint currently provides safe built-in first-aid responses and can be
+replaced later with the project's AI service.
+
 ---
 
 ## 10. Git Workflow & Branching Strategy
