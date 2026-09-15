@@ -1,3 +1,39 @@
+:root {
+  --bg: #f3f8f4;
+  --surface: #ffffff;
+  --surface-alt: #e8f3e9;
+  --text: #173d36;
+  --muted: #6b7d8c;
+  --heading: #07583f;
+  --primary: #08786d;
+  --primary-dark: #07583f;
+  --primary-soft: rgba(8, 120, 109, 0.16);
+  --border: #c5d3dc;
+  --shadow: rgba(0, 0, 0, 0.08);
+  --search-bg: #ffffff;
+  --table-border: #e5edf1;
+  --hero-bg: linear-gradient(135deg, rgba(231, 247, 239, 0.94), rgba(255, 253, 246, 0.88));
+  --button-secondary: #7b3548;
+}
+
+body[data-theme="dark"] {
+  --bg: #0d1717;
+  --surface: #1a2a2b;
+  --surface-alt: #1d3535;
+  --text: #edf7f4;
+  --muted: #a8c3bf;
+  --heading: #d9fff5;
+  --primary: #4ecfb1;
+  --primary-dark: #22b69c;
+  --primary-soft: rgba(78, 207, 177, 0.2);
+  --border: #314a49;
+  --shadow: rgba(0, 0, 0, 0.35);
+  --search-bg: #132221;
+  --table-border: #2d3d3c;
+  --hero-bg: linear-gradient(135deg, rgba(16, 40, 38, 0.94), rgba(19, 31, 31, 0.96));
+  --button-secondary: #d98ca3;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -8,8 +44,9 @@ body {
   position: relative;
   isolation: isolate;
   font-family: Arial, sans-serif;
-  background: #f3f8f4;
-  color: #173d36;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 /* A subtle, fixed crest keeps the FUTA identity visible without affecting readability. */
@@ -36,6 +73,29 @@ body > * {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.theme-toggle .theme-icon {
+  font-size: 16px;
 }
 
 .topbar h2 {
@@ -78,7 +138,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   gap: 40px;
-  background: linear-gradient(135deg, rgba(231, 247, 239, 0.94), rgba(255, 253, 246, 0.88));
+  background: var(--hero-bg);
 }
 
 .hero section {
@@ -86,25 +146,25 @@ nav {
 }
 
 .hero h1 {
-  color: #07583f;
+  color: var(--heading);
   font-size: 42px;
   margin-bottom: 20px;
 }
 
 .hero p {
-  color: #566b7a;
+  color: var(--muted);
   font-size: 18px;
   line-height: 1.7;
   margin-bottom: 25px;
 }
 
 .hero-card {
-  background: white;
+  background: var(--surface);
   padding: 35px;
   max-width: 350px;
   text-align: center;
   border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px var(--shadow);
 }
 
 .hospital-icon {
@@ -116,7 +176,7 @@ nav {
   border: none;
   border-radius: 6px;
   padding: 12px 20px;
-  background: #08786d;
+  background: var(--primary);
   color: white;
   font-size: 15px;
   font-weight: bold;
@@ -125,11 +185,11 @@ nav {
 }
 
 .button:hover {
-  background: #07583f;
+  background: var(--primary-dark);
 }
 
 .button.secondary {
-  background: #7b3548;
+  background: var(--button-secondary);
 }
 
 .container {
@@ -148,20 +208,20 @@ nav {
 
 .page-heading h1 {
   margin-bottom: 5px;
-  color: #07583f;
+  color: var(--heading);
 }
 
 .muted {
-  color: #6b7d8c;
+  color: var(--muted);
 }
 
 .form-card {
   width: 100%;
   max-width: 450px;
-  background: white;
+  background: var(--surface);
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 20px var(--shadow);
 }
 
 .wide-form {
@@ -171,12 +231,12 @@ nav {
 
 .form-card h1,
 .form-card h2 {
-  color: #07583f;
+  color: var(--heading);
 }
 
 .form-card h2 {
   margin-top: 25px;
-  border-bottom: 1px solid #dce6eb;
+  border-bottom: 1px solid var(--border);
   padding-bottom: 8px;
 }
 
@@ -197,10 +257,12 @@ nav {
 .search-input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #c5d3dc;
+  border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 15px;
   font-family: inherit;
+  background: var(--search-bg);
+  color: var(--text);
 }
 
 .form-card textarea {
@@ -212,8 +274,8 @@ nav {
 .form-card textarea:focus,
 .search-input:focus {
   outline: none;
-  border-color: #08786d;
-  box-shadow: 0 0 0 3px rgba(8, 120, 109, 0.16);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
 }
 
 .form-grid {
@@ -248,7 +310,7 @@ nav {
 .demo-login {
   margin-top: 20px;
   text-align: center;
-  color: #6b7d8c;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -273,9 +335,9 @@ nav {
 
 .table-wrapper {
   overflow-x: auto;
-  background: white;
+  background: var(--surface);
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 15px var(--shadow);
 }
 
 table {
@@ -288,12 +350,12 @@ th,
 td {
   padding: 14px;
   text-align: left;
-  border-bottom: 1px solid #e5edf1;
+  border-bottom: 1px solid var(--table-border);
 }
 
 th {
-  background: #e8f3e9;
-  color: #07583f;
+  background: var(--surface-alt);
+  color: var(--heading);
 }
 
 .small-button {
@@ -301,7 +363,7 @@ th {
   border: none;
   border-radius: 4px;
   padding: 7px 10px;
-  background: #08786d;
+  background: var(--primary);
   color: white;
   text-decoration: none;
   cursor: pointer;
@@ -314,7 +376,7 @@ th {
 
 .empty {
   text-align: center;
-  color: #6b7d8c;
+  color: var(--muted);
 }
 
 .logout-button {

@@ -1,7 +1,13 @@
 const loginForm = document.getElementById("loginForm");
 const message = document.getElementById("message");
 
-loginForm.addEventListener("submit", async (event) => {
+const AUTH_KEY = "futa-hospital-auth";
+
+function getStoredPatients() {
+  return JSON.parse(localStorage.getItem("futa-hospital-patients") || "[]");
+}
+
+loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const staffId = document.getElementById("staffId").value.trim();
@@ -16,7 +22,6 @@ loginForm.addEventListener("submit", async (event) => {
       headers: {
         "Content-Type": "application/json"
       },
-      credentials: "same-origin",
       body: JSON.stringify({
         staffId,
         password
@@ -26,17 +31,13 @@ loginForm.addEventListener("submit", async (event) => {
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message || "Unable to sign in.");
+      throw new Error(result.message);
     }
 
     message.textContent = result.message;
     message.className = "message success";
 
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 500);
-  } catch (error) {
-    message.textContent = error.message;
-    message.className = "message error";
-  }
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 500);
 });
